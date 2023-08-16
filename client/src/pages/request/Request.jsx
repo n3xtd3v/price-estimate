@@ -1,9 +1,21 @@
-import './request.scss'
+import { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import "./request.scss";
 
 export const Request = () => {
-    return (
-        <div className='request'>Request</div>
-    )
-}
+  const auth = useSelector((state) => state.auth);
 
-export default Request
+  const navigate = useNavigate();
+  let location = useLocation();
+
+  useEffect(() => {
+    if (!auth.token && location.pathname === "/request") {
+      navigate("/signin");
+    }
+  }, [auth]);
+
+  return <div className="request">Request</div>;
+};
+
+export default Request;

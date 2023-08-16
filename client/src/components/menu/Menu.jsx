@@ -1,76 +1,89 @@
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import SellIcon from '@mui/icons-material/Sell';
-import PostAddIcon from '@mui/icons-material/PostAdd';
-import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
-import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
-import './menu.scss';
-
-const menu = [
-    {
-        id: 1,
-        title: 'main',
-        listItem: [
-            {
-                id: 1,
-                title: 'dashboard',
-                url: '/',
-                icon: <DashboardIcon />
-            },
-            {
-                id: 2,
-                title: 'item price',
-                url: '/item-price',
-                icon: <SellIcon />
-            },
-            {
-                id: 3,
-                title: 'template',
-                url: '/template',
-                icon: <PostAddIcon />
-            },
-            {
-                id: 4,
-                title: 'request',
-                url: '/request',
-                icon: <DownloadRoundedIcon />
-            }
-        ]
-    },
-    {
-        id: 2,
-        title: 'settings',
-        listItem: [
-            {
-                id: 1,
-                title: 'users',
-                url: '/settings/users',
-                icon: <GroupOutlinedIcon />
-            }
-        ]
-    }
-]
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import SellIcon from "@mui/icons-material/Sell";
+import PostAddIcon from "@mui/icons-material/PostAdd";
+import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
+import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { signout } from "../../redux/actions/authAction";
+import "./menu.scss";
 
 const Menu = () => {
-    return (
-        <div className='menu'>
-            {menu.map((item) => (
-                <div className="item" key={item.id}>
-                    <div className="title">{item.title}</div>
-                    {item.listItem.map((listItem) => (
-                        < Link to={listItem.url} className="listItem" key={listItem.id}>
-                            <div>
-                                {listItem.icon}
-                            </div>
-                            <span>{listItem.title}</span>
-                        </Link>
-                    ))
-                    }
-                </div>
-            ))
-            }
-        </div >
-    )
-}
+  const auth = useSelector((state) => state.auth);
 
-export default Menu
+  const dispatch = useDispatch();
+
+  const handleSignout = () => {
+    dispatch(signout());
+  };
+
+  return (
+    <div className="menu">
+      <div className="item">
+        <div className="title">Main</div>
+        <Link to="/" className="listItem">
+          <div>
+            <SellIcon />
+          </div>
+
+          <span>item price</span>
+        </Link>
+
+        <Link to="/template" className="listItem">
+          <div>
+            <PostAddIcon />
+          </div>
+
+          <span>template</span>
+        </Link>
+
+        <Link to="/request" className="listItem">
+          <div>
+            <DownloadRoundedIcon />
+          </div>
+
+          <span>request</span>
+        </Link>
+      </div>
+
+      {auth.user?.role !== "staff" ? (
+        <div className="item">
+          <div className="title">Settings</div>
+          <Link to="/settings/dashboard" className="listItem">
+            <div>
+              <DashboardIcon />
+            </div>
+
+            <span>Dashboard</span>
+          </Link>
+
+          <Link to="/settings/users" className="listItem">
+            <div>
+              <GroupOutlinedIcon />
+            </div>
+
+            <span>Users</span>
+          </Link>
+        </div>
+      ) : (
+        ""
+      )}
+
+      <div
+        className="item"
+        style={{ borderTop: "2px solid #384256", paddingTop: "10px" }}
+      >
+        <Link to="#" className="listItem" onClick={handleSignout}>
+          <div>
+            <LogoutIcon />
+          </div>
+
+          <span>Sign out</span>
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+export default Menu;

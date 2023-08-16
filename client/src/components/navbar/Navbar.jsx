@@ -1,18 +1,22 @@
-import './navbar.scss';
+import { useSelector } from "react-redux";
+import SellIcon from "@mui/icons-material/Sell";
+import "./navbar.scss";
 
 const Navbar = () => {
-    return (
-        <div className='navbar'>
-            <div className='logo'>
-                <img src="/price-tag.svg" alt="icon" />
-                <span>Price Estimate</span>
-            </div>
+  const auth = useSelector((state) => state.auth);
 
-            <div className="user">
-                <span>Keng</span>
-            </div>
-        </div>
-    )
-}
+  return (
+    <div className="navbar">
+      <div className="logo">
+        <SellIcon />
+        <span>Price Estimate</span>
+      </div>
 
-export default Navbar
+      <div className="user">
+        <span>{auth.user?.account?.toLowerCase()}</span>
+      </div>
+    </div>
+  );
+};
+
+export default Navbar;

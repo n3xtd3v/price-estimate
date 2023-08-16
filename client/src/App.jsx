@@ -1,30 +1,24 @@
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { refreshToken } from "./redux/actions/authAction";
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import Dashboard from "./pages/dashboard/Dashboard";
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Route,
-  Link,
-  Outlet,
-} from "react-router-dom";
 import ItemPrice from "./pages/item-price/ItemPrice";
 import Template from "./pages/template/Template";
 import Request from "./pages/request/Request";
 import SignIn from "./pages/signin/SignIn";
 import Users from "./pages/settings/users/Users";
-
 import Navbar from "./components/navbar/Navbar";
 import Menu from "./components/menu/Menu";
-import './styles/global.scss';
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from '@tanstack/react-query'
-
+import Alerts from "./components/alerts/Alerts";
+import "./styles/global.scss";
 
 function App() {
+  const dispatch = useDispatch();
 
-  const queryClient = new QueryClient()
+  useEffect(() => {
+    dispatch(refreshToken());
+  }, []);
 
   const Layout = () => {
     return (
@@ -35,14 +29,12 @@ function App() {
             <Menu />
           </div>
           <div className="contentContainer">
-            <QueryClientProvider client={queryClient}>
-              <Outlet />
-            </QueryClientProvider>
+            <Outlet />
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const router = createBrowserRouter([
     {
@@ -51,10 +43,6 @@ function App() {
       children: [
         {
           path: "/",
-          element: <Dashboard />,
-        },
-        {
-          path: "/item-price",
           element: <ItemPrice />,
         },
         {
@@ -69,16 +57,24 @@ function App() {
           path: "/settings/users",
           element: <Users />,
         },
-      ]
+        {
+          path: "/settings/dashboard",
+          element: <Dashboard />,
+        },
+      ],
     },
     {
-      path: '/signin',
-      element: <SignIn />
-    }
+      path: "/signin",
+      element: <SignIn />,
+    },
   ]);
 
-  return <RouterProvider router={router} />
-
+  return (
+    <>
+      <Alerts />
+      <RouterProvider router={router} />
+    </>
+  );
 }
 
-export default App
+export default App;
