@@ -15,6 +15,12 @@ const ItemPrice = () => {
   const navigate = useNavigate();
   let location = useLocation();
 
+  useEffect(() => {
+    if (!auth.token && location.pathname === "/") {
+      navigate("/signin");
+    }
+  }, [auth, location]);
+
   setTimeout(() => {
     if (error === true) {
       setError((prev) => (prev = false));

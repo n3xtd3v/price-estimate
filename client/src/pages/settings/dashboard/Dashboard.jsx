@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getUsersSetting } from "../../redux/actions/settingAction";
-import TopBox from "../../components/topBox/TopBox";
-import ChartBox from "../../components/chartBox/ChartBox";
+import { getUsersSetting } from "../../../redux/actions/settingAction";
+import TopBox from "../../../components/topBox/TopBox";
+import ChartBox from "../../../components/chartBox/ChartBox";
 import {
   chartBoxUser,
   chartBoxProduct,
@@ -11,10 +11,10 @@ import {
   chartBoxConversion,
   barChartBoxVisit,
   barChartBoxRevenue,
-} from "../../data";
-import BarChartBox from "../../components/barCharbox/BarChartBox";
-import { PieChartBox } from "../../components/pieChartBox/PieChartBox";
-import { BigChartBox } from "../../components/bigChartBox/BigChartBox";
+} from "../../../data";
+import BarChartBox from "../../../components/barCharbox/BarChartBox";
+import { PieChartBox } from "../../../components/pieChartBox/PieChartBox";
+import { BigChartBox } from "../../../components/bigChartBox/BigChartBox";
 import "./dashboard.scss";
 
 const Dashboard = () => {
@@ -26,14 +26,14 @@ const Dashboard = () => {
   let location = useLocation();
 
   useEffect(() => {
-    if (auth.token) {
-      dispatch(getUsersSetting(auth));
+    if (!auth.token && location.pathname === "/settings/dashboard") {
+      navigate("/signin");
     }
   }, [auth]);
 
   useEffect(() => {
-    if (!auth.token && location.pathname === "/") {
-      navigate("/signin");
+    if (auth.token) {
+      dispatch(getUsersSetting(auth));
     }
   }, [auth]);
 

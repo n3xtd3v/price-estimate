@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { refreshToken } from "./redux/actions/authAction";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import Dashboard from "./pages/dashboard/Dashboard";
+import Dashboard from "./pages/settings/dashboard/Dashboard";
 import ItemPrice from "./pages/item-price/ItemPrice";
 import Template from "./pages/template/Template";
 import Request from "./pages/request/Request";

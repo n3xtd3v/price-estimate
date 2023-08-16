@@ -1,6 +1,7 @@
 import "./users.scss";
 import DataTable from "../../../components/dataTable/DataTable";
 import { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getUsersSetting } from "../../../redux/actions/settingAction";
 
@@ -58,7 +59,16 @@ const cells = [
 const Users = () => {
   const auth = useSelector((state) => state.auth);
   const settingUser = useSelector((state) => state.setting);
+
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  let location = useLocation();
+
+  // useEffect(() => {
+  //   if (!auth.token && location.pathname === "/settings/users") {
+  //     navigate("/signin");
+  //   }
+  // }, [auth, location]);
 
   useEffect(() => {
     if (auth.token) {
