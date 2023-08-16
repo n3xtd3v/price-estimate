@@ -172,7 +172,7 @@ const userCtrl = {
           .json({ msg: "Access is not allowed, please contact supervisor!" });
       }
 
-      if (role_name !== "admin" && role_name !== "supervisor") {
+      if (role_name !== "admin") {
         return res
           .status(400)
           .json({ msg: "This role access is not allowed!" });
