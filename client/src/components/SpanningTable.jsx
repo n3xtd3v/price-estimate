@@ -172,8 +172,6 @@ export default function SpanningTable({
   const handlePrintTemplate = (e) => {
     e.preventDefault();
 
-    console.log("PrintId Handle", printId);
-
     const newPrintTemplate = {
       HN,
       charges,

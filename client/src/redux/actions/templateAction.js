@@ -110,7 +110,6 @@ export const postPrintTemplate =
     try {
       const res = await postDataAPI("print-template", data, token);
 
-      console.log(res);
       dispatch({
         type: TEMPLATE_ACTION.POST_PRINTTEMPLATE,
         payload: res.data.printTemplateUID,
