@@ -2,8 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import SellIcon from "@mui/icons-material/Sell";
-import PostAddIcon from "@mui/icons-material/PostAdd";
-import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { signout } from "../../redux/actions/authAction";
@@ -30,21 +29,21 @@ const Menu = () => {
           <span>item price</span>
         </Link>
 
-        <Link to="/template" className="listItem">
+        {/* <Link to="/template" className="listItem">
           <div>
-            <PostAddIcon />
+            <InsertDriveFileIcon />
           </div>
 
           <span>template</span>
-        </Link>
+        </Link> */}
 
-        <Link to="/request" className="listItem">
+        {/* <Link to="/request" className="listItem">
           <div>
             <DownloadRoundedIcon />
           </div>
 
           <span>request</span>
-        </Link>
+        </Link> */}
       </div>
 
       {auth.user?.role !== "staff" ? (
@@ -70,10 +69,7 @@ const Menu = () => {
         ""
       )}
 
-      <div
-        className="item"
-        style={{ borderTop: "2px solid #384256", paddingTop: "10px" }}
-      >
+      <div className="item">
         <Link to="#" className="listItem" onClick={handleSignout}>
           <div>
             <LogoutIcon />

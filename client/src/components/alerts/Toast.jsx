@@ -5,7 +5,12 @@ const Toast = ({ msg, bgColor }) => {
   return (
     <Alert
       severity={bgColor}
-      sx={{ position: "fixed", bottom: "10px", right: "10px" }}
+      sx={{
+        position: "fixed",
+        bottom: "10px",
+        right: "10px",
+        minWidth: "280px",
+      }}
     >
       <AlertTitle>{msg.title}</AlertTitle>
       {msg.body}

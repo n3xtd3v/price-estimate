@@ -5,7 +5,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import "./select-bar.scss";
+import Box from "@mui/material/Box";
 
 const SelectBar = ({ addCharges, setChargeType, chargeType }) => {
   const [itemType, setItemType] = useState("");
@@ -31,26 +31,31 @@ const SelectBar = ({ addCharges, setChargeType, chargeType }) => {
   };
 
   return (
-    <div className="select-bar">
-      <div className="item-select">
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">
-            Step 1 select item type
-          </InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={itemType}
-            onChange={handleChangeSelectItemType}
-            sx={{ background: "white" }}
-          >
-            <MenuItem value={"service"}>Service</MenuItem>
-            <MenuItem value={"inventory"}>Inventory</MenuItem>
-          </Select>
-        </FormControl>
-      </div>
+    <Box
+      sx={{
+        display: "flex",
+        gap: "10px",
+        marginY: "10px",
+        flexDirection: { xs: "column", xl: "row" },
+      }}
+    >
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">
+          Step 1 select item type
+        </InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={itemType}
+          onChange={handleChangeSelectItemType}
+          sx={{ background: "white" }}
+        >
+          <MenuItem value={"service"}>Service</MenuItem>
+          <MenuItem value={"inventory"}>Inventory</MenuItem>
+        </Select>
+      </FormControl>
 
-      <div className="item-select">
+      <FormControl fullWidth>
         <Autocomplete
           disablePortal
           disableClearable
@@ -63,33 +68,32 @@ const SelectBar = ({ addCharges, setChargeType, chargeType }) => {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Step 2 search item: code or name"
-              sx={{ background: "white", borderRadius: "5px", width: "550px" }}
+              label="Step 2 search item code or name"
+              sx={{ background: "white", borderRadius: "5px" }}
             />
           )}
         />
-      </div>
+      </FormControl>
 
-      <div className="item-select">
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">
-            Step 3 select charge type
-          </InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="selectChargeType"
-            value={chargeType}
-            onChange={handleChangeSelectChargeType}
-            sx={{ background: "white" }}
-          >
-            <MenuItem value={"ipd"}>IPD</MenuItem>
-            <MenuItem value={"opd"}>OPD</MenuItem>
-            <MenuItem value={"ipd_intl"}>IPD INTL</MenuItem>
-            <MenuItem value={"opd_intl"}>OPD INTL</MenuItem>
-          </Select>
-        </FormControl>
-      </div>
-    </div>
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">
+          Step 3 select charge type
+        </InputLabel>
+
+        <Select
+          labelId="demo-simple-select-label"
+          id="selectChargeType"
+          value={chargeType}
+          onChange={handleChangeSelectChargeType}
+          sx={{ background: "white" }}
+        >
+          <MenuItem value={"ipd"}>IPD</MenuItem>
+          <MenuItem value={"opd"}>OPD</MenuItem>
+          <MenuItem value={"ipd_intl"}>IPD INTL</MenuItem>
+          <MenuItem value={"opd_intl"}>OPD INTL</MenuItem>
+        </Select>
+      </FormControl>
+    </Box>
   );
 };
 

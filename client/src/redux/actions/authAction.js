@@ -17,9 +17,12 @@ export const signin = (data) => async (dispatch) => {
 
     localStorage.setItem("firstLogin", true);
 
-    dispatch({ type: GLOBALTYPES.ALERT, payload: {} });
-
-    window.location.href = "/";
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: {
+        success: res.data.msg,
+      },
+    });
   } catch (err) {
     dispatch({
       type: GLOBALTYPES.ALERT,
@@ -59,9 +62,19 @@ export const signout = () => async (dispatch) => {
   try {
     localStorage.removeItem("firstLogin");
 
-    await postDataAPI("signout");
+    const res = await postDataAPI("signout");
 
-    window.location.href = "/signin";
+    dispatch({
+      type: GLOBALTYPES.AUTH,
+      payload: {},
+    });
+
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: {
+        success: res.data.msg,
+      },
+    });
   } catch (err) {
     dispatch({
       type: GLOBALTYPES.ALERT,

@@ -11,10 +11,10 @@ const Alerts = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (alert.error) {
+    if (alert.error || alert.success) {
       setTimeout(() => {
         dispatch({ type: GLOBALTYPES.ALERT, payload: {} });
-      }, 5000);
+      }, 10000);
     }
   }, [alert]);
 

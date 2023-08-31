@@ -237,7 +237,7 @@ export default function DataTable({ title, cells, rows, auth }) {
   const [orderBy, setOrderBy] = React.useState("id");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -438,7 +438,7 @@ export default function DataTable({ title, cells, rows, auth }) {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[10, 20, 35]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}

@@ -4,7 +4,7 @@ const initialState = {
   users: "",
 };
 
-const settingAction = (state = initialState, action) => {
+const settingReducer = (state = initialState, action) => {
   switch (action.type) {
     case SETTING_ACTION.GET_USERS:
       return {
@@ -36,4 +36,4 @@ const settingAction = (state = initialState, action) => {
   }
 };
 
-export default settingAction;
+export default settingReducer;

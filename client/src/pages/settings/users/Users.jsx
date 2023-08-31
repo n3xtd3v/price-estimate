@@ -64,11 +64,11 @@ const Users = () => {
   const navigate = useNavigate();
   let location = useLocation();
 
-  // useEffect(() => {
-  //   if (!auth.token && location.pathname === "/settings/users") {
-  //     navigate("/signin");
-  //   }
-  // }, [auth, location]);
+  useEffect(() => {
+    if (!auth.token && location.pathname === "/settings/users") {
+      navigate("/signin");
+    }
+  }, [auth, location]);
 
   useEffect(() => {
     if (auth.token) {

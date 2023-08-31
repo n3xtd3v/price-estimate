@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import SelectBar from "../../components/selectBar/selectBar";
 import SpanningTable from "../../components/SpanningTable";
 import Toast from "../../components/Toast";
-import "./item-price.scss";
+import Box from "@mui/material/Box";
 
 const ItemPrice = () => {
   const auth = useSelector((state) => state.auth);
+  const itemsPrice = useSelector((state) => state.template.itemsPrice);
   const [charges, setCharges] = useState([]);
   const [chargeType, setChargeType] = useState("");
   const [error, setError] = useState(false);
@@ -26,6 +27,10 @@ const ItemPrice = () => {
       setError((prev) => (prev = false));
     }
   }, 5000);
+
+  useEffect(() => {
+    setCharges(itemsPrice);
+  }, [itemsPrice]);
 
   const addCharges = (value) => {
     const check = charges.some(
@@ -84,7 +89,7 @@ const ItemPrice = () => {
   }, [auth]);
 
   return (
-    <div className="item-price">
+    <Box>
       <h1>Item Price</h1>
 
       <SelectBar
@@ -103,7 +108,7 @@ const ItemPrice = () => {
       />
 
       {error ? <Toast msg={"This service type already exists."} /> : ""}
-    </div>
+    </Box>
   );
 };
 

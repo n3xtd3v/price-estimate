@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -10,12 +12,38 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import Container from "@mui/material/Container";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import SpanningTableEdit from "./SpanningTableEdit";
 import Typography from "@mui/material/Typography";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import NoteAddIcon from "@mui/icons-material/NoteAdd";
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 import ExcelJS from "exceljs";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import Autocomplete from "@mui/material/Autocomplete";
+import PrintIcon from "@mui/icons-material/Print";
+import {
+  postTemplate,
+  getTemplateByUID,
+  getTemplateItemsDetail,
+  deleteTemplate,
+  postPrintTemplate,
+} from "../redux/actions/templateAction";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  borderRadius: "10px",
+  boxShadow: 24,
+  p: 4,
+};
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -44,6 +72,33 @@ export default function SpanningTable({
   chargeType,
   setChargeType,
 }) {
+  const auth = useSelector((state) => state.auth);
+  const templates = useSelector((state) => state.template.templates);
+  const printId = useSelector((state) => state.template.printId);
+  const [templateName, setTemplateName] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [HN, setHN] = useState("");
+
+  const [openSaveTemplate, setOpenSaveTemplate] = useState(false);
+  const handleOpenSaveTemplate = () => setOpenSaveTemplate(true);
+  const handleCloseSaveTemplate = () => setOpenSaveTemplate(false);
+
+  const [openAddTemplate, setOpenAddTemplate] = useState(false);
+  const handleOpenAddTemplate = () => setOpenAddTemplate(true);
+  const handleCloseAddTemplate = () => setOpenAddTemplate(false);
+
+  const [openPrintTemplate, setOpenPrintTemplate] = useState(false);
+  const handleOpenPrintTemplate = () => setOpenPrintTemplate(true);
+  const handleClosePrintTemplate = () => setOpenPrintTemplate(false);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (auth.token) {
+      dispatch(getTemplateByUID(auth));
+    }
+  }, [auth]);
+
   function ccyFormat(num) {
     return `${num?.toFixed(2)}`;
   }
@@ -86,6 +141,54 @@ export default function SpanningTable({
   const handleChargeType = () => {
     setChargeType("");
   };
+
+  const handleSubmitSaveTemplate = (e) => {
+    e.preventDefault();
+
+    const template = {
+      templateName,
+      charges,
+    };
+
+    dispatch(postTemplate(auth, { template }));
+
+    setOpenSaveTemplate(false);
+  };
+
+  const handleSubmitSelectTemplate = (e) => {
+    e.preventDefault();
+
+    dispatch(getTemplateItemsDetail(auth, { selectedTemplate }));
+
+    setOpenAddTemplate(false);
+  };
+
+  const handleDeleteTemplate = () => {
+    dispatch(deleteTemplate(auth, { selectedTemplate }));
+
+    setOpenAddTemplate(false);
+  };
+
+  const handlePrintTemplate = (e) => {
+    e.preventDefault();
+
+    console.log("PrintId Handle", printId);
+
+    const newPrintTemplate = {
+      HN,
+      charges,
+    };
+    dispatch(postPrintTemplate(auth, { newPrintTemplate }));
+
+    setOpenPrintTemplate(false);
+  };
+
+  if (printId) {
+    window.open(
+      `https://mpuser:P%40ssw0rd@d1vd-dsql-mp-01.medparkhospital.com/Reports/report/IT%20Reports/Price_Estimate_APP/Price_Estimate_Report?HN=${HN}&charge_type=${chargeType}&PE_print_UID=${printId}&PE_user_UID=${auth?.user.id}&rs:Command=Render&rc:Parameters=false`,
+      "_blank"
+    );
+  }
 
   const exportExcelFile = () => {
     const workbook = new ExcelJS.Workbook();
@@ -264,7 +367,7 @@ export default function SpanningTable({
   };
 
   return (
-    <Container maxWidth="xl">
+    <Box>
       <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
         <Table sx={{ minWidth: 700 }} aria-label="spanning table">
           <TableHead>
@@ -272,8 +375,17 @@ export default function SpanningTable({
               <StyledTableCell align="center" colSpan={3}>
                 Details
               </StyledTableCell>
-              <StyledTableCell align="center" colSpan={6}>
+
+              <StyledTableCell align="center" colSpan={5}>
                 Price
+              </StyledTableCell>
+
+              <StyledTableCell align="center" colSpan={1}>
+                <Tooltip title="Add or delete template">
+                  <IconButton onClick={handleOpenAddTemplate}>
+                    <PlaylistAddIcon sx={{ color: "white" }} />
+                  </IconButton>
+                </Tooltip>
               </StyledTableCell>
             </StyledTableRow>
 
@@ -358,7 +470,7 @@ export default function SpanningTable({
                         </Typography>
                       )}
                       <Tooltip
-                        title={`MPH_IPD * Qty | ${charge.mph_ipd} * ${charge.qty}`}
+                        title={`IPD * Qty | ${charge.mph_ipd} * ${charge.qty}`}
                       >
                         <Typography variant="subtitle2" gutterBottom>
                           {numberWithCommas(
@@ -379,7 +491,7 @@ export default function SpanningTable({
                         </Typography>
                       )}
                       <Tooltip
-                        title={`MPH_IPD * Qty | ${charge.mph_ipd} * ${charge.qty}`}
+                        title={`IPD * Qty | ${charge.mph_ipd} * ${charge.qty}`}
                       >
                         <Typography variant="subtitle2" gutterBottom>
                           {numberWithCommas(
@@ -404,7 +516,7 @@ export default function SpanningTable({
                         </Typography>
                       )}
                       <Tooltip
-                        title={`MPH_OPD * Qty | ${charge.mph_opd} * ${charge.qty}`}
+                        title={`OPD * Qty | ${charge.mph_opd} * ${charge.qty}`}
                       >
                         <Typography variant="subtitle2" gutterBottom>
                           {numberWithCommas(
@@ -425,7 +537,7 @@ export default function SpanningTable({
                         </Typography>
                       )}
                       <Tooltip
-                        title={`MPH_OPD * Qty | ${charge.mph_opd} * ${charge.qty}`}
+                        title={`OPD * Qty | ${charge.mph_opd} * ${charge.qty}`}
                       >
                         <Typography variant="subtitle2" gutterBottom>
                           {numberWithCommas(
@@ -450,7 +562,7 @@ export default function SpanningTable({
                         </Typography>
                       )}
                       <Tooltip
-                        title={`MPH_IPD_INTL * Qty | ${charge.mph_ipd_intl} * ${charge.qty}`}
+                        title={`IPD INTL * Qty | ${charge.mph_ipd_intl} * ${charge.qty}`}
                       >
                         <Typography variant="subtitle2" gutterBottom>
                           {numberWithCommas(
@@ -471,7 +583,7 @@ export default function SpanningTable({
                         </Typography>
                       )}
                       <Tooltip
-                        title={`MPH_IPD_INTL * Qty | ${charge.mph_ipd_intl} * ${charge.qty}`}
+                        title={`IPD INTL * Qty | ${charge.mph_ipd_intl} * ${charge.qty}`}
                       >
                         <Typography variant="subtitle2" gutterBottom>
                           {numberWithCommas(
@@ -496,7 +608,7 @@ export default function SpanningTable({
                         </Typography>
                       )}
                       <Tooltip
-                        title={`MPH_OPD_INTL * Qty | ${charge.mph_opd_intl} * ${charge.qty}`}
+                        title={`OPD INTL * Qty | ${charge.mph_opd_intl} * ${charge.qty}`}
                       >
                         <Typography variant="subtitle2" gutterBottom>
                           {numberWithCommas(
@@ -517,7 +629,7 @@ export default function SpanningTable({
                         </Typography>
                       )}
                       <Tooltip
-                        title={`MPH_OPD_INTL * Qty | ${charge.mph_opd_intl} * ${charge.qty}`}
+                        title={`OPD INTL * Qty | ${charge.mph_opd_intl} * ${charge.qty}`}
                       >
                         <Typography variant="subtitle2" gutterBottom>
                           {numberWithCommas(
@@ -576,7 +688,7 @@ export default function SpanningTable({
 
                 {!chargeType ? (
                   <StyledTableCell align="right">
-                    <Tooltip title="Total MPH IPD">
+                    <Tooltip title="Total IPD">
                       <Typography variant="subtitle2" gutterBottom>
                         {numberWithCommas(ccyFormat(totalIPD()))}
                       </Typography>
@@ -584,7 +696,7 @@ export default function SpanningTable({
                   </StyledTableCell>
                 ) : chargeType === "ipd" ? (
                   <StyledTableCell align="right">
-                    <Tooltip title="Total MPH IPD">
+                    <Tooltip title="Total IPD">
                       <Typography variant="subtitle2" gutterBottom>
                         {numberWithCommas(ccyFormat(totalIPD()))}
                       </Typography>
@@ -596,7 +708,7 @@ export default function SpanningTable({
 
                 {!chargeType ? (
                   <StyledTableCell align="right">
-                    <Tooltip title="Total MPH OPD">
+                    <Tooltip title="Total OPD">
                       <Typography variant="subtitle2" gutterBottom>
                         {numberWithCommas(ccyFormat(totalOPD()))}
                       </Typography>
@@ -604,7 +716,7 @@ export default function SpanningTable({
                   </StyledTableCell>
                 ) : chargeType === "opd" ? (
                   <StyledTableCell align="right">
-                    <Tooltip title="Total MPH OPD">
+                    <Tooltip title="Total OPD">
                       <Typography variant="subtitle2" gutterBottom>
                         {numberWithCommas(ccyFormat(totalOPD()))}
                       </Typography>
@@ -616,7 +728,7 @@ export default function SpanningTable({
 
                 {!chargeType ? (
                   <StyledTableCell align="right">
-                    <Tooltip title="Total MPH IPD INTL">
+                    <Tooltip title="Total IPD INTL">
                       <Typography variant="subtitle2" gutterBottom>
                         {numberWithCommas(ccyFormat(totalIPD_INTL()))}
                       </Typography>
@@ -624,7 +736,7 @@ export default function SpanningTable({
                   </StyledTableCell>
                 ) : chargeType === "ipd_intl" ? (
                   <StyledTableCell align="right">
-                    <Tooltip title="Total MPH IPD INTL">
+                    <Tooltip title="Total IPD INTL">
                       <Typography variant="subtitle2" gutterBottom>
                         {numberWithCommas(ccyFormat(totalIPD_INTL()))}
                       </Typography>
@@ -636,7 +748,7 @@ export default function SpanningTable({
 
                 {!chargeType ? (
                   <StyledTableCell align="right">
-                    <Tooltip title="Total MPH OPD INTL">
+                    <Tooltip title="Total OPD INTL">
                       <Typography variant="subtitle2" gutterBottom>
                         {numberWithCommas(ccyFormat(totalOPD_INTL()))}
                       </Typography>
@@ -644,7 +756,7 @@ export default function SpanningTable({
                   </StyledTableCell>
                 ) : chargeType === "opd_intl" ? (
                   <StyledTableCell align="right">
-                    <Tooltip title="Total MPH OPD INTL">
+                    <Tooltip title="Total OPD INTL">
                       <Typography variant="subtitle2" gutterBottom>
                         {numberWithCommas(ccyFormat(totalOPD_INTL()))}
                       </Typography>
@@ -662,15 +774,27 @@ export default function SpanningTable({
                   </Tooltip>
                 </StyledTableCell>
                 <StyledTableCell align="center">
+                  <Tooltip title="Reset charge type">
+                    <IconButton onClick={handleChargeType}>
+                      <RestartAltIcon />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Tooltip title="Create template">
+                    <IconButton onClick={handleOpenSaveTemplate}>
+                      <NoteAddIcon />
+                    </IconButton>
+                  </Tooltip>
+
                   <Tooltip title="Download excel">
                     <IconButton onClick={exportExcelFile}>
                       <FileDownloadIcon />
                     </IconButton>
                   </Tooltip>
 
-                  <Tooltip title="Reset charge type">
-                    <IconButton onClick={handleChargeType}>
-                      <RestartAltIcon />
+                  <Tooltip title="Print">
+                    <IconButton onClick={handleOpenPrintTemplate}>
+                      <PrintIcon />
                     </IconButton>
                   </Tooltip>
                 </StyledTableCell>
@@ -679,6 +803,123 @@ export default function SpanningTable({
           </TableBody>
         </Table>
       </TableContainer>
-    </Container>
+
+      <Modal
+        open={openSaveTemplate}
+        onClose={handleCloseSaveTemplate}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Create template
+          </Typography>
+
+          <Box component="form" onSubmit={handleSubmitSaveTemplate}>
+            <TextField
+              fullWidth
+              id="outlined-basic"
+              label="Name template"
+              variant="outlined"
+              name="template"
+              value={templateName}
+              onChange={(e) => setTemplateName(e.target.value)}
+              sx={{ my: "20px" }}
+            />
+
+            <Button type="submit" variant="contained" fullWidth>
+              Create
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={openAddTemplate}
+        onClose={handleCloseAddTemplate}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Add or delete template
+          </Typography>
+
+          <Box component="form" onSubmit={handleSubmitSelectTemplate}>
+            <Autocomplete
+              disablePortal
+              disableClearable
+              id="combo-box-demo"
+              options={templates}
+              getOptionLabel={(templates) => `${templates.template_name}`}
+              onChange={(event, newValue) => {
+                setSelectedTemplate(newValue.template_UID);
+              }}
+              sx={{ my: "20px" }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select template"
+                  sx={{
+                    background: "white",
+                    borderRadius: "5px",
+                  }}
+                />
+              )}
+            />
+            <Button type="submit" variant="contained" fullWidth>
+              Add
+            </Button>
+          </Box>
+
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            color="error"
+            onClick={handleDeleteTemplate}
+            sx={{ marginTop: "10px" }}
+          >
+            Delete
+          </Button>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={openPrintTemplate}
+        onClose={handleClosePrintTemplate}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Print
+          </Typography>
+
+          <Box>
+            <TextField
+              fullWidth
+              id="outlined-basic"
+              label="HN"
+              variant="outlined"
+              name="HN"
+              value={HN}
+              onChange={(e) => setHN(e.target.value)}
+              sx={{ my: "20px" }}
+            />
+          </Box>
+
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            onClick={handlePrintTemplate}
+            disabled={!chargeType || !HN ? true : false}
+          >
+            Print
+          </Button>
+        </Box>
+      </Modal>
+    </Box>
   );
 }
