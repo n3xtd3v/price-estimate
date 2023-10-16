@@ -14,6 +14,19 @@ const itemPriceCtrl = {
       return res.status(500).json({ msg: err.message });
     }
   },
+
+  searchLog: async (req, res) => {
+    try {
+      const { item_code } = req.body;
+      const { UID } = req.user;
+
+      await mssql.query`
+        exec pMP_insert_search_log ${UID}, ${item_code}
+      `;
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
 };
 
 module.exports = itemPriceCtrl;

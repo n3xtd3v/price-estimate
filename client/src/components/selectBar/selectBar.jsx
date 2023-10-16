@@ -87,6 +87,7 @@ const SelectBar = ({ addCharges, setChargeType, chargeType }) => {
           onChange={handleChangeSelectChargeType}
           sx={{ background: "white" }}
         >
+          <MenuItem value={"for_doctor"}>For Doctor</MenuItem>
           <MenuItem value={"ipd"}>IPD</MenuItem>
           <MenuItem value={"opd"}>OPD</MenuItem>
           <MenuItem value={"ipd_intl"}>IPD INTL</MenuItem>

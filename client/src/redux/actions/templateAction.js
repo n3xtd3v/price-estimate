@@ -7,6 +7,7 @@ export const TEMPLATE_ACTION = {
   GET_TEMPLATES_ITEMS_DETAIL: "GET_TEMPLATES_ITEMS_DETAIL",
   DELETE_TEMPLATE: "DELETE_TEMPLATE",
   POST_PRINTTEMPLATE: "POST_PRINTTEMPLATE",
+  POST_SEARCH_LOG: "POST_SEARCH_LOG",
 };
 
 export const postTemplate =
@@ -114,6 +115,23 @@ export const postPrintTemplate =
         type: TEMPLATE_ACTION.POST_PRINTTEMPLATE,
         payload: res.data.printTemplateUID,
       });
+    } catch (err) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: {
+          error: err.response.data.msg,
+        },
+      });
+    }
+  };
+
+export const postSearchLog =
+  ({ charges, auth }) =>
+  async (dispatch) => {
+    try {
+      const item = charges[charges.length - 1];
+
+      await postDataAPI("item/search-log", item, auth.token);
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,

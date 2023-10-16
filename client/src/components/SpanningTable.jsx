@@ -99,8 +99,25 @@ export default function SpanningTable({
     }
   }, [auth]);
 
+  useEffect(() => {
+    if (printId) {
+      window.open(
+        `https://mpuser:P%40ssw0rd@d1vd-dsql-mp-01.medparkhospital.com/Reports/report/IT%20Reports/Price_Estimate_APP/Price_Estimate_Report?HN=${HN}&charge_type=${chargeType}&PE_print_UID=${printId}&PE_user_UID=${auth?.user.id}&rs:Command=Render&rc:Parameters=false`,
+        "_blank"
+      );
+
+      setHN("");
+    }
+  }, [printId]);
+
   function ccyFormat(num) {
     return `${num?.toFixed(2)}`;
+  }
+
+  function totalForDoctor() {
+    return (totalForDoctor = charges
+      .map((charge) => charge.doctor * charge.qty)
+      .reduce((sum, i) => sum + i, 0));
   }
 
   function totalIPD() {
@@ -176,17 +193,11 @@ export default function SpanningTable({
       HN,
       charges,
     };
+
     dispatch(postPrintTemplate(auth, { newPrintTemplate }));
 
     setOpenPrintTemplate(false);
   };
-
-  if (printId) {
-    window.open(
-      `https://mpuser:P%40ssw0rd@d1vd-dsql-mp-01.medparkhospital.com/Reports/report/IT%20Reports/Price_Estimate_APP/Price_Estimate_Report?HN=${HN}&charge_type=${chargeType}&PE_print_UID=${printId}&PE_user_UID=${auth?.user.id}&rs:Command=Render&rc:Parameters=false`,
-      "_blank"
-    );
-  }
 
   const exportExcelFile = () => {
     const workbook = new ExcelJS.Workbook();
@@ -374,7 +385,7 @@ export default function SpanningTable({
                 Details
               </StyledTableCell>
 
-              <StyledTableCell align="center" colSpan={5}>
+              <StyledTableCell align="center" colSpan={6}>
                 Price
               </StyledTableCell>
 
@@ -391,6 +402,15 @@ export default function SpanningTable({
               <StyledTableCell align="left">No.</StyledTableCell>
               <StyledTableCell align="left">Code</StyledTableCell>
               <StyledTableCell align="left">Name</StyledTableCell>
+
+              {!chargeType ? (
+                <StyledTableCell align="right">For Doctor</StyledTableCell>
+              ) : chargeType === "for_doctor" ? (
+                <StyledTableCell align="right">For Doctor</StyledTableCell>
+              ) : (
+                <StyledTableCell align="right">For Doctor</StyledTableCell>
+              )}
+
               {!chargeType ? (
                 <StyledTableCell align="right">IPD</StyledTableCell>
               ) : chargeType === "ipd" ? (
@@ -431,7 +451,7 @@ export default function SpanningTable({
           <TableBody>
             {charges <= 0 ? (
               <StyledTableRow>
-                <StyledTableCell align="center" colSpan={9}>
+                <StyledTableCell align="center" colSpan={10}>
                   Item not found.
                 </StyledTableCell>
               </StyledTableRow>
@@ -455,6 +475,48 @@ export default function SpanningTable({
                       {charge.item_name_e}
                     </Typography>
                   </StyledTableCell>
+
+                  {!chargeType ? (
+                    <StyledTableCell align="right">
+                      {charge.qty > 1 && (
+                        <Typography
+                          variant="subtitle2"
+                          gutterBottom
+                          sx={{ color: "#bdbdbd" }}
+                        >
+                          {numberWithCommas(ccyFormat(charge.doctor))}
+                        </Typography>
+                      )}
+                      <>
+                        <Typography variant="subtitle2" gutterBottom>
+                          {numberWithCommas(
+                            ccyFormat(charge.doctor * charge.qty)
+                          )}
+                        </Typography>
+                      </>
+                    </StyledTableCell>
+                  ) : chargeType === "for_doctor" ? (
+                    <StyledTableCell align="right">
+                      {charge.qty > 1 && (
+                        <Typography
+                          variant="subtitle2"
+                          gutterBottom
+                          sx={{ color: "#bdbdbd" }}
+                        >
+                          {numberWithCommas(ccyFormat(charge.doctor))}
+                        </Typography>
+                      )}
+                      <>
+                        <Typography variant="subtitle2" gutterBottom>
+                          {numberWithCommas(
+                            ccyFormat(charge.doctor * charge.qty)
+                          )}
+                        </Typography>
+                      </>
+                    </StyledTableCell>
+                  ) : (
+                    <StyledTableCell align="right">0.00</StyledTableCell>
+                  )}
 
                   {!chargeType ? (
                     <StyledTableCell align="right">
@@ -686,6 +748,26 @@ export default function SpanningTable({
 
                 {!chargeType ? (
                   <StyledTableCell align="right">
+                    <Tooltip title="Total For Doctor">
+                      <Typography variant="subtitle2" gutterBottom>
+                        {numberWithCommas(ccyFormat(totalForDoctor()))}
+                      </Typography>
+                    </Tooltip>
+                  </StyledTableCell>
+                ) : chargeType === "for_doctor" ? (
+                  <StyledTableCell align="right">
+                    <Tooltip title="Total For Doctor">
+                      <Typography variant="subtitle2" gutterBottom>
+                        {numberWithCommas(ccyFormat(totalForDoctor()))}
+                      </Typography>
+                    </Tooltip>
+                  </StyledTableCell>
+                ) : (
+                  <StyledTableCell align="right">0.00</StyledTableCell>
+                )}
+
+                {!chargeType ? (
+                  <StyledTableCell align="right">
                     <Tooltip title="Total IPD">
                       <Typography variant="subtitle2" gutterBottom>
                         {numberWithCommas(ccyFormat(totalIPD()))}
@@ -912,7 +994,9 @@ export default function SpanningTable({
             variant="contained"
             fullWidth
             onClick={handlePrintTemplate}
-            disabled={!chargeType || !HN ? true : false}
+            disabled={
+              !chargeType || !HN || chargeType === "for_doctor" ? true : false
+            }
           >
             Print
           </Button>

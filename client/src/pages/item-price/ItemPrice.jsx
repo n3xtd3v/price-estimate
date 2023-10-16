@@ -5,6 +5,7 @@ import SelectBar from "../../components/selectBar/selectBar";
 import SpanningTable from "../../components/SpanningTable";
 import Toast from "../../components/Toast";
 import Box from "@mui/material/Box";
+import { postSearchLog } from "../../redux/actions/templateAction";
 
 const ItemPrice = () => {
   const auth = useSelector((state) => state.auth);
@@ -13,6 +14,7 @@ const ItemPrice = () => {
   const [chargeType, setChargeType] = useState("");
   const [error, setError] = useState(false);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   let location = useLocation();
 
@@ -32,6 +34,12 @@ const ItemPrice = () => {
     setCharges(itemsPrice);
   }, [itemsPrice]);
 
+  useEffect(() => {
+    if (charges.length > 0) {
+      dispatch(postSearchLog({ charges, auth }));
+    }
+  }, [charges]);
+
   const addCharges = (value) => {
     const check = charges.some(
       (charge) => charge.item_code === value?.item_code
@@ -49,6 +57,7 @@ const ItemPrice = () => {
           mph_opd: value.MPH_OPD,
           mph_ipd_intl: value.MPH_IPD_INTL,
           mph_opd_intl: value.MPH_OPD_INTL,
+          doctor: value.DOCTOR,
           qty: 1,
           isEditValue: false,
         },
