@@ -4,6 +4,7 @@ import { getDataAPI, patchDataAPI } from "../../utils/fetchData";
 export const SETTING_ACTION = {
   GET_USERS: "GET_USERS",
   IS_ACTIVE_SWITCH: "IS_ACTIVE_SWITCH",
+  IS_PRINT_SWITCH: "IS_PRINT_SWITCH",
   TAKE_ROLE_ADMIN: "TAKE_ROLE_ADMIN",
   TAKE_ROLE_SUPERVISOR: "TAKE_ROLE_SUPERVISOR",
   TAKE_ROLE_STAFF: "TAKE_ROLE_STAFF",
@@ -41,6 +42,28 @@ export const isActiveSwitch =
 
       dispatch({
         type: SETTING_ACTION.IS_ACTIVE_SWITCH,
+        payload: res.data.users,
+      });
+
+      location.reload();
+    } catch (err) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: {
+          error: err.response.data.msg,
+        },
+      });
+    }
+  };
+
+export const isPrintSwitch =
+  ({ token }, selected) =>
+  async (dispatch) => {
+    try {
+      const res = await patchDataAPI("users/print", selected, token);
+
+      dispatch({
+        type: SETTING_ACTION.IS_PRINT_SWITCH,
         payload: res.data.users,
       });
 

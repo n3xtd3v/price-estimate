@@ -21,12 +21,14 @@ import SyncLockIcon from "@mui/icons-material/SyncLock";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
 import PersonIcon from "@mui/icons-material/Person";
 import HiveIcon from "@mui/icons-material/Hive";
 import { visuallyHidden } from "@mui/utils";
 import { useDispatch } from "react-redux";
 import {
   isActiveSwitch,
+  isPrintSwitch,
   takeRoleAdmin,
   takeRoleSupervisor,
   takeRoleStaff,
@@ -131,6 +133,10 @@ function EnhancedTableToolbar(props) {
     dispatch(isActiveSwitch(auth, { selected }));
   };
 
+  const handleClickSwitchIsPrint = () => {
+    dispatch(isPrintSwitch(auth, { selected }));
+  };
+
   const handleClickTakeRoleAdmin = () => {
     dispatch(takeRoleAdmin(auth, { selected }));
   };
@@ -211,11 +217,19 @@ function EnhancedTableToolbar(props) {
             </IconButton>
           </Tooltip>
           |
-          <Tooltip title="Switch isActive" onClick={handleClickSwitchIsActive}>
-            <IconButton>
-              <SyncLockIcon />
-            </IconButton>
-          </Tooltip>
+          <>
+            <Tooltip title="Switch Print" onClick={handleClickSwitchIsPrint}>
+              <IconButton>
+                <LocalPrintshopIcon />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Switch Active" onClick={handleClickSwitchIsActive}>
+              <IconButton>
+                <SyncLockIcon />
+              </IconButton>
+            </Tooltip>
+          </>
         </Box>
       ) : (
         <Tooltip title="Filter list">
@@ -347,6 +361,7 @@ export default function DataTable({ title, cells, rows, auth }) {
                         }}
                       />
                     </TableCell>
+
                     <TableCell
                       component="th"
                       id={labelId}
@@ -355,7 +370,9 @@ export default function DataTable({ title, cells, rows, auth }) {
                     >
                       {row.id}
                     </TableCell>
+
                     <TableCell align="right">{row.user_name}</TableCell>
+
                     <TableCell align="right">
                       {row.cuser === 0 ? (
                         <Tooltip title="System">
@@ -367,9 +384,11 @@ export default function DataTable({ title, cells, rows, auth }) {
                         <TableCell align="right">{row.cuser}</TableCell>
                       )}
                     </TableCell>
+
                     <TableCell align="right">
                       {`${row.cwhen.slice(0, 10)} ${row.cwhen.slice(11, 19)}`}
                     </TableCell>
+
                     <TableCell align="right">
                       {row.cuser === 0 ? (
                         <Tooltip title="System">
@@ -381,10 +400,11 @@ export default function DataTable({ title, cells, rows, auth }) {
                         <TableCell align="right">{row.muser}</TableCell>
                       )}
                     </TableCell>
-                    <TableCell align="right">{`${row.cwhen.slice(
-                      0,
-                      10
-                    )} ${row.cwhen.slice(11, 19)}`}</TableCell>
+
+                    <TableCell align="right">
+                      {`${row.cwhen.slice(0, 10)} ${row.cwhen.slice(11, 19)}`}
+                    </TableCell>
+
                     <TableCell align="right">
                       {row.role_name === "admin" ? (
                         <Tooltip title="Admin">
@@ -402,6 +422,22 @@ export default function DataTable({ title, cells, rows, auth }) {
                         <Tooltip title="Staff">
                           <IconButton>
                             <PersonIcon />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                    </TableCell>
+
+                    <TableCell align="right">
+                      {row.is_print === "Y" ? (
+                        <Tooltip title="Active">
+                          <IconButton style={{ color: "green" }}>
+                            <LocalPrintshopIcon />
+                          </IconButton>
+                        </Tooltip>
+                      ) : (
+                        <Tooltip title="Inactive">
+                          <IconButton>
+                            <LocalPrintshopIcon />
                           </IconButton>
                         </Tooltip>
                       )}

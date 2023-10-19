@@ -24,6 +24,7 @@ const userCtrl = {
       const users = await mssql.query`
         SELECT
           PE_user.UID AS id,
+          PE_user.is_print,
           PE_user.status_flag,
           PE_user.user_name,
           PE_role.role_name,
@@ -149,6 +150,90 @@ const userCtrl = {
 
       res.json({
         msg: "Update users success.",
+        users: users.recordset,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
+  updateSwitchIsPrint: async (req, res) => {
+    try {
+      const { role_name, PE_user_Status_flag, PE_user_role_Status_flag } =
+        req.user;
+
+      const { selected } = req.body;
+
+      if (
+        PE_user_Status_flag !== "active" ||
+        PE_user_role_Status_flag !== "active"
+      ) {
+        return res
+          .status(400)
+          .json({ msg: "Access is not allowed, please contact supervisor!" });
+      }
+
+      if (role_name !== "admin") {
+        return res
+          .status(400)
+          .json({ msg: "This role access is not allowed!" });
+      }
+
+      let selectedUsers = [];
+      for (i = 0; selected.length > i; i++) {
+        const users = await mssql.query`
+          SELECT
+            PE_user.UID,
+            PE_user.user_name,
+            PE_user.is_print,
+            PE_role.role_name,
+            PE_user.status_flag AS PE_user_Status_flag,
+            PE_user_role.status_flag AS PE_user_role_Status_flag
+          FROM
+            PE_user_role
+          INNER JOIN
+            PE_user ON PE_user_role.PE_user_UID = PE_user.UID
+          INNER JOIN
+            PE_role ON PE_user_role.PE_role_UID = PE_role.UID
+          WHERE PE_user.UID = ${selected[i]}
+        `;
+
+        selectedUsers.push(users.recordset[0]);
+      }
+
+      for (i = 0; selectedUsers.length > i; i++) {
+        if (selectedUsers[i].is_print === "Y") {
+          await mssql.query`
+            UPDATE PE_user
+            SET is_print = 'N'
+            WHERE PE_user.UID = ${selectedUsers[i].UID}
+          `;
+        } else {
+          await mssql.query`
+            UPDATE PE_user
+            SET is_print = 'Y'
+            WHERE PE_user.UID = ${selectedUsers[i].UID}
+          `;
+        }
+      }
+
+      const users = await mssql.query`
+        SELECT
+          PE_user.UID AS id,
+          PE_user.status_flag,
+          PE_user.user_name,
+          PE_user.is_print,
+          PE_role.role_name
+        FROM
+          PE_user_role
+        INNER JOIN
+          PE_user ON PE_user_role.PE_user_UID = PE_user.UID
+        INNER JOIN
+          PE_role ON PE_user_role.PE_role_UID = PE_role.UID
+      `;
+
+      res.json({
+        msg: "Update print success.",
         users: users.recordset,
       });
     } catch (err) {

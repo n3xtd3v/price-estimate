@@ -866,17 +866,25 @@ export default function SpanningTable({
                     </IconButton>
                   </Tooltip>
 
-                  <Tooltip title="Download excel">
-                    <IconButton onClick={exportExcelFile}>
-                      <FileDownloadIcon />
-                    </IconButton>
-                  </Tooltip>
+                  {auth?.user.is_print === "Y" ? (
+                    <Tooltip title="Download excel">
+                      <IconButton onClick={exportExcelFile}>
+                        <FileDownloadIcon />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    ""
+                  )}
 
-                  <Tooltip title="Print">
-                    <IconButton onClick={handleOpenPrintTemplate}>
-                      <PrintIcon />
-                    </IconButton>
-                  </Tooltip>
+                  {auth?.user.is_print === "Y" ? (
+                    <Tooltip title="Print">
+                      <IconButton onClick={handleOpenPrintTemplate}>
+                        <PrintIcon />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    ""
+                  )}
                 </StyledTableCell>
               </StyledTableRow>
             )}

@@ -6,6 +6,8 @@ router.get("/users", auth, userCtrl.getUsers);
 
 router.patch("/users", auth, userCtrl.updateSwitchIsActive);
 
+router.patch("/users/print", auth, userCtrl.updateSwitchIsPrint);
+
 router.patch("/users/admin", auth, userCtrl.updateRoleAdmin);
 
 router.patch("/users/supervisor", auth, userCtrl.updateRoleSupervisor);

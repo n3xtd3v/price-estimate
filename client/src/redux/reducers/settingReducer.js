@@ -16,6 +16,11 @@ const settingReducer = (state = initialState, action) => {
         ...state,
         users: action.payload,
       };
+    case SETTING_ACTION.IS_PRINT_SWITCH:
+      return {
+        ...state,
+        users: action.payload,
+      };
     case SETTING_ACTION.TAKE_ROLE_ADMIN:
       return {
         ...state,

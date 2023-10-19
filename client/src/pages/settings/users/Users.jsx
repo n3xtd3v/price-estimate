@@ -49,10 +49,16 @@ const cells = [
     label: "Role",
   },
   {
+    id: "is_print",
+    numeric: true,
+    disablePadding: false,
+    label: "Print",
+  },
+  {
     id: "status_flag",
     numeric: true,
     disablePadding: false,
-    label: "isActive",
+    label: "Active",
   },
 ];
 

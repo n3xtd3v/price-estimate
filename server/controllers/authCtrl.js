@@ -58,7 +58,7 @@ const authCtrl = {
 
       const user = await mssql.query`
         SELECT
-          PE_user.UID, PE_user.status_flag, PE_user.user_name, PE_role.role_name 
+          PE_user.UID, PE_user.status_flag, PE_user.user_name, PE_user.is_print, PE_role.role_name
         FROM
           PE_user_role
         INNER JOIN 
@@ -96,6 +96,7 @@ const authCtrl = {
           account: user.recordset[0]?.user_name,
           role: user.recordset[0]?.role_name,
           status_flag: user.recordset[0]?.status_flag,
+          is_print: user.recordset[0]?.is_print,
         },
       });
     } catch (err) {
@@ -127,7 +128,7 @@ const authCtrl = {
 
           const user = await mssql.query`
             SELECT
-              PE_user.UID, PE_user.status_flag, PE_user.user_name, PE_role.role_name 
+              PE_user.UID, PE_user.status_flag, PE_user.user_name, PE_user.is_print, PE_role.role_name 
             FROM
               PE_user_role
             INNER JOIN 
@@ -149,6 +150,7 @@ const authCtrl = {
               account: user.recordset[0]?.user_name,
               role: user.recordset[0]?.role_name,
               status_flag: user.recordset[0]?.status_flag,
+              is_print: user.recordset[0]?.is_print,
             },
           });
         }
