@@ -68,7 +68,7 @@ const SelectBar = ({ addCharges, setChargeType, chargeType }) => {
           renderInput={(params) => (
             <TextField
               {...params}
-              label="Step 2 search item code or name"
+              label="Step 2 select or search item code or name"
               sx={{ background: "white", borderRadius: "5px" }}
             />
           )}

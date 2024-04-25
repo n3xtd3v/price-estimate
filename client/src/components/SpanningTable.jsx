@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -25,6 +25,7 @@ import ExcelJS from "exceljs";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import Autocomplete from "@mui/material/Autocomplete";
 import PrintIcon from "@mui/icons-material/Print";
+import readXlsxFile from "read-excel-file";
 import {
   postTemplate,
   getTemplateByUID,
@@ -66,11 +67,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function SpanningTable({
   charges,
+  setCharges,
   deleteCharge,
   editCharge,
   editQtyCharge,
   chargeType,
   setChargeType,
+  addChargesWithFile,
 }) {
   const auth = useSelector((state) => state.auth);
   const templates = useSelector((state) => state.template.templates);
@@ -78,6 +81,7 @@ export default function SpanningTable({
   const [templateName, setTemplateName] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const [HN, setHN] = useState("");
+  const ref = useRef(null);
 
   const [openSaveTemplate, setOpenSaveTemplate] = useState(false);
   const handleOpenSaveTemplate = () => setOpenSaveTemplate(true);
@@ -197,6 +201,10 @@ export default function SpanningTable({
     dispatch(postPrintTemplate(auth, { newPrintTemplate }));
 
     setOpenPrintTemplate(false);
+  };
+
+  const handleClearItem = () => {
+    setCharges([]);
   };
 
   const exportExcelFile = () => {
@@ -375,6 +383,17 @@ export default function SpanningTable({
     });
   };
 
+  const inputfile = document.getElementById("inputfile");
+  inputfile?.addEventListener("change", () => {
+    readXlsxFile(inputfile.files[0]).then((rows) => {
+      let cutFirstRow = rows.slice(1);
+
+      addChargesWithFile(cutFirstRow);
+
+      ref.current && (ref.current.value = "");
+    });
+  });
+
   return (
     <Box>
       <TableContainer component={Paper} sx={{ marginTop: "20px" }}>
@@ -390,11 +409,29 @@ export default function SpanningTable({
               </StyledTableCell>
 
               <StyledTableCell align="center" colSpan={1}>
-                <Tooltip title="Add or delete template">
+                <Tooltip title="Upload file excel">
+                  <input
+                    type="file"
+                    id="inputfile"
+                    name="inputfile"
+                    accept=".xlsx"
+                    ref={ref}
+                  />
+                </Tooltip>
+
+                <Tooltip title="Select or delete template">
                   <IconButton onClick={handleOpenAddTemplate}>
                     <PlaylistAddIcon sx={{ color: "white" }} />
                   </IconButton>
                 </Tooltip>
+
+                {charges.length > 0 && (
+                  <Tooltip title="Clear item">
+                    <IconButton onClick={handleClearItem}>
+                      <RestartAltIcon sx={{ color: "white" }} />
+                    </IconButton>
+                  </Tooltip>
+                )}
               </StyledTableCell>
             </StyledTableRow>
 
@@ -930,7 +967,7 @@ export default function SpanningTable({
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Add or delete template
+            Select or delete template
           </Typography>
 
           <Box component="form" onSubmit={handleSubmitSelectTemplate}>
@@ -956,7 +993,7 @@ export default function SpanningTable({
               )}
             />
             <Button type="submit" variant="contained" fullWidth>
-              Add
+              Select
             </Button>
           </Box>
 

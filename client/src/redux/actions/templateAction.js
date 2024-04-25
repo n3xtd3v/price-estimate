@@ -126,12 +126,10 @@ export const postPrintTemplate =
   };
 
 export const postSearchLog =
-  ({ charges, auth }) =>
+  ({ code, auth }) =>
   async (dispatch) => {
     try {
-      const item = charges[charges.length - 1];
-
-      await postDataAPI("item/search-log", item, auth.token);
+      await postDataAPI("item/search-log", { code }, auth.token);
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,

@@ -7,6 +7,8 @@ import Toast from "../../components/Toast";
 import Box from "@mui/material/Box";
 import { postSearchLog } from "../../redux/actions/templateAction";
 
+import { postDataAPI } from "../../utils/fetchData";
+
 const ItemPrice = () => {
   const auth = useSelector((state) => state.auth);
   const itemsPrice = useSelector((state) => state.template.itemsPrice);
@@ -34,12 +36,6 @@ const ItemPrice = () => {
     setCharges(itemsPrice);
   }, [itemsPrice]);
 
-  useEffect(() => {
-    if (charges.length > 0) {
-      dispatch(postSearchLog({ charges, auth }));
-    }
-  }, [charges]);
-
   const addCharges = (value) => {
     const check = charges.some(
       (charge) => charge.item_code === value?.item_code
@@ -65,6 +61,36 @@ const ItemPrice = () => {
 
       setError(false);
     }
+  };
+
+  const addChargesWithFile = async (value) => {
+    let itemCode = [];
+
+    for (let i = 0; i < value.length; i++) {
+      itemCode.push(value[i][0]);
+    }
+
+    let itemCodetoString = itemCode.join();
+
+    const res = await postDataAPI("items", { itemCodetoString }, auth.token);
+
+    let newItems = [];
+
+    for (let i = 0; i < res.data.itemsFixproperty.length; i++) {
+      newItems.push({
+        item_code: res.data.itemsFixproperty[i].item_code,
+        item_name_e: res.data.itemsFixproperty[i].item_name_e,
+        mph_ipd: res.data.itemsFixproperty[i].MPH_IPD,
+        mph_opd: res.data.itemsFixproperty[i].MPH_OPD,
+        mph_ipd_intl: res.data.itemsFixproperty[i].MPH_IPD_INTL,
+        mph_opd_intl: res.data.itemsFixproperty[i].MPH_OPD_INTL,
+        doctor: res.data.itemsFixproperty[i].DOCTOR,
+        qty: 1,
+        isEditValue: false,
+      });
+    }
+
+    setCharges(newItems);
   };
 
   const deleteCharge = (code) => {
@@ -109,11 +135,13 @@ const ItemPrice = () => {
 
       <SpanningTable
         charges={charges}
+        setCharges={setCharges}
         deleteCharge={deleteCharge}
         editCharge={editCharge}
         editQtyCharge={editQtyCharge}
         chargeType={chargeType}
         setChargeType={setChargeType}
+        addChargesWithFile={addChargesWithFile}
       />
 
       {error ? <Toast msg={"This service type already exists."} /> : ""}

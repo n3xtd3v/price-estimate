@@ -2,7 +2,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import SellIcon from "@mui/icons-material/Sell";
-import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { signout } from "../../redux/actions/authAction";
