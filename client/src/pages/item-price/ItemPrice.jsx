@@ -5,7 +5,6 @@ import SelectBar from "../../components/selectBar/selectBar";
 import SpanningTable from "../../components/SpanningTable";
 import Toast from "../../components/Toast";
 import Box from "@mui/material/Box";
-import { postSearchLog } from "../../redux/actions/templateAction";
 
 import { postDataAPI } from "../../utils/fetchData";
 
@@ -16,7 +15,6 @@ const ItemPrice = () => {
   const [chargeType, setChargeType] = useState("");
   const [error, setError] = useState(false);
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   let location = useLocation();
 
@@ -71,6 +69,8 @@ const ItemPrice = () => {
     }
 
     let itemCodetoString = itemCode.join();
+
+    console.log(itemCodetoString);
 
     const res = await postDataAPI("items", { itemCodetoString }, auth.token);
 
