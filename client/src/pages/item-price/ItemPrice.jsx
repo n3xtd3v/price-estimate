@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import SelectBar from "../../components/selectBar/selectBar";
 import SpanningTable from "../../components/SpanningTable";
@@ -69,8 +69,6 @@ const ItemPrice = () => {
     }
 
     let itemCodetoString = itemCode.join();
-
-    console.log(itemCodetoString);
 
     const res = await postDataAPI("items", { itemCodetoString }, auth.token);
 

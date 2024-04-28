@@ -409,7 +409,7 @@ export default function SpanningTable({
               </StyledTableCell>
 
               <StyledTableCell align="center" colSpan={1}>
-                <Tooltip title="Upload file excel">
+                <Tooltip title="Upload file excel, The first row of data will be omitted">
                   <input
                     type="file"
                     id="inputfile"
